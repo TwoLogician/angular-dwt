@@ -9,10 +9,10 @@ import dwtConfig from "./dwt/config"
 })
 export class AppComponent implements OnInit {
 
-  baseAddress = "localhost"
+  baseAddress = "asp.demosoft.me"
   DWObject: WebTwain
   newIndices: any[] = []
-  port = 5000
+  port = 80
   visible = false
 
   download() {
@@ -24,16 +24,6 @@ export class AppComponent implements OnInit {
     this.DWObject.HTTPDownload(this.baseAddress, "/api/files/fileName/imageData.pdf", () => { }, (code, message) => {
       console.log(`${code} - ${message}`)
     })
-  }
-
-  initScan() {
-    Dynamsoft.WebTwainEnv.Load()
-    dwtConfig.applyConfig(Dynamsoft)
-    Dynamsoft.WebTwainEnv.RegisterEvent("OnWebTwainReady", () => { this.Dynamsoft_OnReady() })
-  }
-
-  ngOnInit() {
-    this.initScan()
   }
 
   Dynamsoft_OnReady(): void {
@@ -49,6 +39,20 @@ export class AppComponent implements OnInit {
         this.DWObject.Addon.PDF.SetConvertMode(EnumDWT_ConvertMode.CM_RENDERALL)
       }
     }
+  }
+
+  initScan() {
+    Dynamsoft.WebTwainEnv.Load()
+    dwtConfig.applyConfig(Dynamsoft)
+    Dynamsoft.WebTwainEnv.RegisterEvent("OnWebTwainReady", () => { this.Dynamsoft_OnReady() })
+  }
+
+  ngOnInit() {
+    this.initScan()
+  }
+
+  print() {
+    this.DWObject.Print(false)
   }
 
   scan() {
