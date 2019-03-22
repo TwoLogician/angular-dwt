@@ -12,7 +12,6 @@ export class AppComponent implements OnInit {
   baseAddress = "asp.demosoft.me"
   bPostLoad = false
   DWObject: WebTwain
-  index = 0
   newIndices: any[] = []
   port = 80
   visible = false
@@ -59,7 +58,7 @@ export class AppComponent implements OnInit {
     this.bPostLoad = false
     this.newIndices = []
     this.DWObject.IfAppendImage = false
-    this.DWObject.CurrentImageIndexInBuffer = this.index
+    this.DWObject.CurrentImageIndexInBuffer
     this.DWObject.RegisterEvent("OnPostLoad", () => {
       if (!this.DWObject.IfAppendImage) {
         this.bPostLoad = true
