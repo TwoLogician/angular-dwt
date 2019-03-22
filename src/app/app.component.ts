@@ -10,7 +10,9 @@ import dwtConfig from "./dwt/config"
 export class AppComponent implements OnInit {
 
   baseAddress = "asp.demosoft.me"
+  bPostLoad = false
   DWObject: WebTwain
+  index = 0
   newIndices: any[] = []
   port = 80
   visible = false
@@ -30,6 +32,12 @@ export class AppComponent implements OnInit {
     this.DWObject = Dynamsoft.WebTwainEnv.GetWebTwain("dwtcontrolContainer")
     if (this.DWObject) {
       this.DWObject.Height = 600
+      this.DWObject.RegisterEvent("OnBitmapChanged", (strUpdatedIndex, operationType, sCurrentIndex) => {
+        for (var i = 0; i < this.newIndices.length; i++) {
+          this.newIndices[i] += 1
+        }
+        this.newIndices.push(parseInt(strUpdatedIndex[0]))
+      })
       this.DWObject.ShowImageEditor("dwtcontrolContainerLargeViewer", 780, 600)
       this.DWObject.ShowPageNumber = true
       this.DWObject.SetViewMode(1, 4)
@@ -47,6 +55,31 @@ export class AppComponent implements OnInit {
     Dynamsoft.WebTwainEnv.RegisterEvent("OnWebTwainReady", () => { this.Dynamsoft_OnReady() })
   }
 
+  insert() {
+    this.bPostLoad = false
+    this.newIndices = []
+    this.DWObject.IfAppendImage = false
+    this.DWObject.CurrentImageIndexInBuffer = this.index
+    this.DWObject.RegisterEvent("OnPostLoad", () => {
+      if (!this.DWObject.IfAppendImage) {
+        this.bPostLoad = true
+        for (var j = 0; j < this.newIndices.length / 2; j++)
+          if (this.newIndices[j] != this.newIndices[this.newIndices.length - j - 1])
+            this.DWObject.SwitchImage(this.newIndices[j], this.newIndices[this.newIndices.length - j - 1])
+      }
+      this.DWObject.IfAppendImage = true
+      this.newIndices = []
+    })
+    this.DWObject.RegisterEvent("OnBitmapChanged", (strUpdatedIndex, operationType, sCurrentIndex) => {
+      if (operationType == 2) { //inserting
+        for (var i = 0; i < this.newIndices.length; i++)
+          this.newIndices[i] += 1
+        this.newIndices.push(parseInt(strUpdatedIndex[0]))
+      }
+    })
+    this.DWObject.LoadImageEx("", 5)
+  }
+
   ngOnInit() {
     this.initScan()
   }
@@ -55,7 +88,7 @@ export class AppComponent implements OnInit {
     this.DWObject.Print(false)
   }
 
-  scan() {
+  initScanClick() {
     this.visible = false
     setTimeout(() => {
       this.visible = true
@@ -77,11 +110,11 @@ export class AppComponent implements OnInit {
       "/api/files",
       "imageData.pdf",
       () => {
-        this.scan()
+        this.initScanClick()
       },
       (code, message, response) => {
         console.log(`${code} - ${message} - ${response}`)
-        this.scan()
+        this.initScanClick()
       }
     );
   }
