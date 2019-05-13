@@ -1,8 +1,18 @@
-<button (click)="initScanClick()" style="margin-right: 0.5rem;">Initialize Scan</button>
-<button (click)="insert()" style="margin-right: 0.5rem;">Insert</button>
-<button (click)="upload()" style="margin-right: 0.5rem;">Upload</button>
-<button (click)="download()" style="margin-right: 0.5rem;">Download</button>
-<button (click)="print()" style="margin-right: 0.5rem;">Print</button>
+<button (click)="initScanClick()">Initialize Scan</button>
+|
+<button (click)="insert()">Insert</button>
+|
+<button (click)="download()">Download</button>
+|
+<button (click)="print()">Print</button>
+|
+<select [(ngModel)]="source">
+  <option *ngFor="let option of sources; let i = index" [value]="i">{{option}}</option>
+</select>
+<button (click)="scan()">Scan</button>
+|
+<button (click)="upload()">Upload</button>
+|
 <hr />
 <div *ngIf="visible">
   <div id="dwtcontrolContainer" style="float: left; margin-right:20px;"></div>

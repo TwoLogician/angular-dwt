@@ -1,5 +1,5 @@
 /// <reference types="dwt" />
-import { Component, OnInit } from "@angular/core"
+import { Component } from "@angular/core"
 import dwtConfig from "./dwt/config"
 
 @Component({
@@ -7,13 +7,15 @@ import dwtConfig from "./dwt/config"
   templateUrl: "./app.component.html",
   styleUrls: ["./app.component.css"]
 })
-export class AppComponent implements OnInit {
+export class AppComponent {
 
   baseAddress = "asp.demosoft.me"
   bPostLoad = false
   DWObject: WebTwain
-  newIndices: any[] = []
+  newIndices = []
   port = 80
+  source = 0
+  sources = []
   visible = false
 
   download() {
@@ -37,14 +39,16 @@ export class AppComponent implements OnInit {
         }
         this.newIndices.push(parseInt(strUpdatedIndex[0]))
       })
+      this.DWObject.SetViewMode(1, 4)
       this.DWObject.ShowImageEditor("dwtcontrolContainerLargeViewer", 780, 600)
       this.DWObject.ShowPageNumber = true
-      this.DWObject.SetViewMode(1, 4)
       this.DWObject.Width = 200
       if (this.DWObject.Addon && this.DWObject.Addon.PDF) {
         this.DWObject.Addon.PDF.SetResolution(300)
         this.DWObject.Addon.PDF.SetConvertMode(EnumDWT_ConvertMode.CM_RENDERALL)
       }
+      this.sources = []
+      Array.from(Array(this.DWObject.SourceCount).keys()).forEach(x => this.sources = [...this.sources, this.DWObject.GetSourceNameItems(x)])
     }
   }
 
@@ -52,6 +56,16 @@ export class AppComponent implements OnInit {
     Dynamsoft.WebTwainEnv.Load()
     dwtConfig.applyConfig(Dynamsoft)
     Dynamsoft.WebTwainEnv.RegisterEvent("OnWebTwainReady", () => { this.Dynamsoft_OnReady() })
+  }
+
+  initScanClick() {
+    this.visible = false
+    setTimeout(() => {
+      this.visible = true
+    }, 500)
+    setTimeout(() => {
+      this.initScan()
+    }, 500)
   }
 
   insert() {
@@ -79,22 +93,19 @@ export class AppComponent implements OnInit {
     this.DWObject.LoadImageEx("", 5)
   }
 
-  ngOnInit() {
-    this.initScan()
-  }
-
   print() {
     this.DWObject.Print(false)
   }
 
-  initScanClick() {
-    this.visible = false
-    setTimeout(() => {
-      this.visible = true
-    }, 500)
-    setTimeout(() => {
-      this.initScan()
-    }, 500)
+  scan() {
+    this.DWObject.SelectSourceByIndex(this.source)
+    this.DWObject.CloseSource()
+    this.DWObject.OpenSource()
+    this.DWObject.IfDisableSourceAfterAcquire = true
+    this.DWObject.IfDuplexEnabled = false
+    this.DWObject.IfFeederEnabled = true
+    this.DWObject.IfShowUI = false
+    this.DWObject.AcquireImage()
   }
 
   upload() {
