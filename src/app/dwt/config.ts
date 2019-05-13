@@ -16,7 +16,7 @@ export default {
         /////////////////////////////////////////////////////////////////////////////////////
         /// If you need to use multiple keys on the same server, you can combine keys and write like this 
         /// Dynamsoft.WebTwainEnv.ProductKey = 'key1;key2;key3';
-        Dynamsoft.WebTwainEnv.ProductKey = 't0113CQIAAAG4Dgyanp0Qt8hjwFtDhOwuPWU+wps4HclQPjMFxe58rF9qQYsGjCZXAseE+O0f6PN2H6AVHASQbZxY61kJ5NEmuD5OmJk67BgZ/ZWaiT8m82cuHtTZFQ/yjUyY6Bty+xH0ZleFRk16AY2TaCg='
+        Dynamsoft.WebTwainEnv.ProductKey = 't0113CQIAABxquOPUVybv5SFd1NtKxqqwponXLJoF3ZOXEi5rFDEHM1zYlkZZ6ZJq5BYFQbDqYfapAcjukiUe/1M7UuyAC7abkJpcMCt1ZGJ01Cs1E39Mls9eMqgTDA+aG10wcW44nUfR292CaPS0C3LmZfM='
 
         ///
         Dynamsoft.WebTwainEnv.Trial = true;
